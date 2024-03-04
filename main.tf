@@ -58,7 +58,7 @@ resource "aws_subnet" "this" {
 resource "aws_security_group" "allow_https_in" {
   name        = "allow-https-inbound-sg"
   description = "Allow HTTPS inbound"
-  vpc_id      = aws_vpc.this.id # Replace with your VPC ID
+  vpc_id      = aws_vpc.this.id
 
   ingress {
     from_port   = 443
@@ -98,9 +98,9 @@ resource "aws_vpc_endpoint" "ecr_api" {
   vpc_id              = aws_vpc.this.id
   service_name        = "com.amazonaws.${var.region}.ecr.api"
   vpc_endpoint_type   = "Interface"
-  subnet_ids          = [aws_subnet.this.id] # Replace with your subnet IDs
+  subnet_ids          = [aws_subnet.this.id]
   private_dns_enabled = true
-  security_group_ids  = [aws_security_group.allow_https_in.id] # Optional: Specify if needed
+  security_group_ids  = [aws_security_group.allow_https_in.id]
 
   tags = {
     Name = "ecr-api-endpoint"
@@ -112,9 +112,9 @@ resource "aws_vpc_endpoint" "ecr_dkr" {
   vpc_id              = aws_vpc.this.id
   service_name        = "com.amazonaws.${var.region}.ecr.dkr"
   vpc_endpoint_type   = "Interface"
-  subnet_ids          = [aws_subnet.this.id] # Replace with your subnet IDs
+  subnet_ids          = [aws_subnet.this.id]
   private_dns_enabled = true
-  security_group_ids  = [aws_security_group.allow_https_in.id] # Optional: Specify if needed
+  security_group_ids  = [aws_security_group.allow_https_in.id]
 
   tags = {
     Name = "ecr-dkr-endpoint"
@@ -136,9 +136,9 @@ resource "aws_vpc_endpoint" "cloudwatch_endpoint" {
   vpc_id              = aws_vpc.this.id
   service_name        = "com.amazonaws.${var.region}.logs"
   vpc_endpoint_type   = "Interface"
-  subnet_ids          = [aws_subnet.this.id] # Replace with your subnet IDs
+  subnet_ids          = [aws_subnet.this.id]
   private_dns_enabled = true
-  security_group_ids  = [aws_security_group.allow_https_in.id] # Optional: Specify if needed
+  security_group_ids  = [aws_security_group.allow_https_in.id]
 
   tags = {
     Name = "cloudwatch-endpoint"
@@ -270,16 +270,14 @@ resource "aws_ecs_task_definition" "this" {
 resource "aws_security_group" "ecs_service_sg" {
   name        = "${var.app_name}-ecs-service-sg"
   description = "Security group for containerized ECS Service app"
-  vpc_id      = aws_vpc.this.id # Replace with your VPC ID
+  vpc_id      = aws_vpc.this.id
 
   # Allow inbound HTTPS (443) from the Fargate tasks' subnet or security group
   ingress {
-    from_port = 8080
-    to_port   = 8080
-    protocol  = "tcp"
-    # cidr_blocks = [aws_subnet.this.cidr_block] # Replace with your Fargate tasks' subnet CIDR or use security group id
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
     cidr_blocks = [aws_subnet.this.cidr_block] # Replace with your Fargate tasks' subnet CIDR or use security group id
-    # security_groups = ["<your-fargate-tasks-sg-id>"] # Alternatively, use security group ID of your Fargate tasks
   }
 
   #   Optional: Allow all outbound traffic
@@ -331,31 +329,3 @@ resource "aws_ecs_service" "this" {
   #     expression = "attribute:ecs.availability-zone in [us-east-1a, us-east-1b]"
   #   }
 }
-
-# output "VPCId" {
-#   value = aws_vpc.this.id
-# }
-
-# output "SubnetId" {
-#   value = aws_subnet.this.id
-# }
-
-# output "SecurityGroupId" {
-#   value = aws_security_group.this.id
-# }
-
-# output "ECRRepositoryARN" {
-#   value = aws_ecr_repository.this.arn
-# }
-
-# output "ECRRepositoryName" {
-#   value = aws_ecr_repository.this.name
-# }
-
-# output "BucketName" {
-#   value = aws_s3_bucket.this.bucket
-# }
-
-# output "BucketURL" {
-#   value = aws_s3_bucket.this.bucket_domain_name
-# }
