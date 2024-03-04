@@ -6,7 +6,7 @@ init:
 plan:
 	terraform plan -out tfplan.binary -refresh=true -var-file=$$(terraform workspace show).tfvars
 
-json: init plan
+json:
 	terraform show -json tfplan.binary > tfplan.json
 
 apply:
@@ -16,10 +16,11 @@ docs:
 	terraform-docs markdown . > tfdocs.md
 
 lint:
+	terraform fmt -recursive
 	tflint
 
-cost: json
-	infracost breakdown --path tfplan.json --usage-file infracost-usage.yml  --sync-usage-file --show-skipped
+cost: 
+	infracost breakdown --path . --usage-file infracost-usage.yml  --sync-usage-file --show-skipped
 
 scan: json
 	checkov -f tfplan.json
