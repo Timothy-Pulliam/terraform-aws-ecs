@@ -81,14 +81,6 @@ resource "aws_security_group" "allow_https_in" {
   }
 }
 
-resource "aws_internet_gateway" "this" {
-  vpc_id = aws_vpc.this.id
-
-  tags = {
-    Name = "ig-navikun-dev"
-    env  = "dev"
-  }
-}
 
 # Amazon ECS tasks hosted on Fargate using version 1.4.0 or later require both the com.amazonaws.region.ecr.dkr 
 # and com.amazonaws.region.ecr.api Amazon ECR VPC endpoints and the Amazon S3 gateway endpoint.
