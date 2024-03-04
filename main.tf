@@ -24,10 +24,6 @@ provider "aws" {
   region = var.region
 }
 
-data "aws_ecr_repository" "this" {
-  name = var.app_name
-}
-
 resource "aws_vpc" "this" {
   cidr_block = "10.0.0.0/16"
 
